@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIA Design Dept — Timetable 2026-27</title>
+<style>
+:root{
+  --navy:#1C3557;--blue:#2B5EA7;--blt:#E8F0FC;--abt:#FDF6EC;
+  --wh:#fff;--bg:#F2F6FB;--bd:#CBD5E8;--sub:#6B7280;
+  --sh:#1D4ED8;--shbg:#DBEAFE;--shbdr:#93C5FD;
+  --pv:#065F46;--pvbg:#D1FAE5;--pvbdr:#6EE7B7;
+  --sb:#991B1B;--sbbg:#FEE2E2;--sbbdr:#FCA5A5;
+  --mq:#5B21B6;--mqbg:#EDE9FE;--mqbdr:#C4B5FD;
+  --free:#9CA3AF;--freebg:#F9FAFB;
+  --fn:'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fn);background:var(--bg);color:var(--navy);font-size:13px;min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#0F1F3D,#1C3557,#2B5EA7);color:#fff;padding:18px 22px 16px}
+.hdr h1{font-size:clamp(16px,3vw,22px);font-weight:800;letter-spacing:.01em}
+.hdr p{font-size:11px;opacity:.7;margin-top:4px}
+.hdr-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;letter-spacing:.03em;border:1px solid}
+.ch-sh{background:var(--shbg);color:var(--sh);border-color:var(--shbdr)}
+.ch-pv{background:var(--pvbg);color:var(--pv);border-color:var(--pvbdr)}
+.ch-sb{background:var(--sbbg);color:var(--sb);border-color:var(--sbbdr)}
+.ch-mq{background:var(--mqbg);color:var(--mq);border-color:var(--mqbdr)}
+
+/* ── STATUS BAR ── */
+.sbar{background:var(--navy);color:#fff;padding:8px 22px;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px}
+.sbar-left{font-weight:600;opacity:.9}
+.wk-btns{display:flex;gap:5px}
+.wk-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;
+  padding:4px 14px;border-radius:4px;cursor:pointer;font:700 11px var(--fn);transition:.15s}
+.wk-btn.on{background:#fff;color:var(--navy)}
+
+/* ── NAV TABS ── */
+.nav{background:var(--wh);border-bottom:2px solid var(--bd);
+  display:flex;padding:0 22px;overflow-x:auto;scrollbar-width:none;gap:0}
+.nav::-webkit-scrollbar{display:none}
+.ntab{background:none;border:none;border-bottom:3px solid transparent;color:var(--sub);
+  padding:12px 18px;cursor:pointer;font:600 12px var(--fn);white-space:nowrap;
+  transition:.15s;letter-spacing:.02em}
+.ntab:hover{color:var(--navy)}
+.ntab.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── CONTROLS ── */
+.ctrl-bar{background:var(--wh);border-bottom:1px solid var(--bd);padding:10px 22px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.ctrl label{display:block;font-size:10px;font-weight:700;color:var(--blue);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+select,input{font-family:var(--fn);font-size:12px;border:1px solid var(--bd);
+  border-radius:6px;padding:7px 10px;background:var(--wh);color:var(--navy);min-width:130px}
+select:focus,input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.si{position:relative}
+.si input{padding-left:28px;min-width:200px}
+.si::before{content:'🔍';position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  font-size:11px;pointer-events:none}
+
+/* ── PERIOD PILLS ── */
+.pperiods{background:var(--wh);border-bottom:1px solid var(--bd);padding:8px 22px;
+  display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ppill{font-size:10px;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--bd);background:var(--freebg);color:var(--sub);transition:.15s;
+  white-space:nowrap}
+.ppill:hover{border-color:var(--blue);color:var(--blue)}
+.ppill.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ppill.brk{background:#FFF9C4;color:#7B6E00;border-color:#F9A825;cursor:default;font-size:9px}
+
+/* ── PANELS ── */
+.panel{display:none;padding:18px 22px;max-width:1600px;margin:0 auto}
+.panel.on{display:block}
+
+/* ══════════════════════════════════════════════
+   VIEW 1 — AT A GLANCE (master grid)
+══════════════════════════════════════════════ */
+.glance-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--bd);
+  box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.glance-table{border-collapse:collapse;width:100%;min-width:900px;font-size:11px}
+.glance-table th{background:var(--navy);color:#fff;padding:10px 10px;text-align:center;
+  font-weight:700;white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+.glance-table th.t-sh{background:var(--sh)}
+.glance-table th.t-pv{background:var(--pv)}
+.glance-table th.t-sb{background:var(--sb)}
+.glance-table th.t-mq{background:var(--mq)}
+.glance-table td{padding:8px 8px;border:1px solid var(--bd);vertical-align:top;
+  min-width:140px;max-width:200px}
+.glance-table td.period-col{background:var(--blt);font-weight:700;color:var(--blue);
+  text-align:center;white-space:nowrap;min-width:90px;max-width:90px}
+.glance-table td.period-col .ptime{font-size:9px;color:var(--sub);font-weight:400;
+  margin-top:2px}
+.glance-table tr:hover td:not(.period-col){background:#F0F6FF}
+.brk-row td{background:#FFF9C4;text-align:center;color:#7B6E00;font-size:10px;
+  font-weight:700;padding:5px;border-color:#F9A825}
+.glance-table tr.wk-b-start td{border-top:3px solid var(--navy)}
+
+/* slot cell */
+.sc{display:flex;flex-direction:column;gap:2px}
+.sc .act{font-size:10px;font-weight:700;line-height:1.3;color:var(--navy)}
+.sc .grp{font-size:9px;color:var(--sub);line-height:1.3}
+.sc .rm{display:inline-block;font-size:9px;font-weight:800;padding:1px 6px;
+  border-radius:3px;margin-top:2px;letter-spacing:.03em}
+.rm-sh{background:var(--shbg);color:var(--sh)}
+.rm-pv{background:var(--pvbg);color:var(--pv)}
+.rm-sb{background:var(--sbbg);color:var(--sb)}
+.rm-mq{background:var(--mqbg);color:var(--mq)}
+.free-cell{color:var(--free);font-size:10px;font-style:italic;text-align:center;
+  padding:4px;background:var(--freebg)}
+.asm-cell{background:#FFF3E0;color:#E65100;font-size:10px;font-weight:700;
+  text-align:center;padding:4px}
+.day-hdr td{background:var(--navy);color:#fff;font-weight:700;text-align:center;
+  font-size:11px;padding:7px;letter-spacing:.06em;border-color:rgba(255,255,255,.1)}
+
+/* ══════════════════════════════════════════════
+   VIEW 2 — BY PERIOD
+══════════════════════════════════════════════ */
+.period-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.tcard{background:var(--wh);border-radius:10px;border:1px solid var(--bd);
+  overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);transition:.15s}
+.tcard:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);transform:translateY(-1px)}
+.tcard-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.tcard-hdr .tname{font-size:13px;font-weight:800}
+.tcard-hdr .tsub{font-size:10px;opacity:.7;margin-top:1px}
+.tcard-body{padding:12px 14px;border-top:1px solid var(--bd)}
+.free-big{background:var(--freebg);border-radius:6px;padding:10px;text-align:center;
+  color:var(--free);font-size:12px;font-weight:600}
+.slot-big{display:flex;gap:10px;align-items:flex-start}
+.slot-ico{font-size:22px;flex-shrink:0}
+.slot-big .sb-act{font-size:13px;font-weight:700;color:var(--navy)}
+.slot-big .sb-grp{font-size:11px;color:var(--sub);margin-top:3px}
+.slot-big .sb-rm{display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;
+  border-radius:4px;margin-top:5px}
+
+/* ══════════════════════════════════════════════
+   VIEW 3 — BY TEACHER
+══════════════════════════════════════════════ */
+.teacher-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ttab{padding:8px 16px;border-radius:6px;border:2px solid var(--bd);cursor:pointer;
+  font:700 12px var(--fn);transition:.15s;background:var(--wh)}
+.ttab.on{color:#fff;border-color:transparent}
+.ttab-sh.on{background:var(--sh)}
+.ttab-pv.on{background:var(--pv)}
+.ttab-sb.on{background:var(--sb)}
+.ttab-mq.on{background:var(--mq)}
+
+.fullday{background:var(--wh);border-radius:10px;border:1px solid var(--bd);overflow:hidden}
+.fd-row{display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--bd)}
+.fd-row:last-child{border-bottom:none}
+.fd-per{padding:10px 12px;background:var(--blt);display:flex;flex-direction:column;
+  justify-content:center;border-right:3px solid var(--blue);text-align:right}
+.fd-per .fp-name{font-size:11px;font-weight:700;color:var(--blue)}
+.fd-per .fp-time{font-size:9px;color:var(--sub);margin-top:2px}
+.fd-slot{padding:10px 14px;display:flex;align-items:center;gap:10px}
+.fd-slot.free{background:var(--freebg)}
+.fd-slot.busy{}
+.fd-slot .fs-ico{font-size:18px;flex-shrink:0}
+.fd-slot .fs-act{font-size:12px;font-weight:700;color:var(--navy)}
+.fd-slot .fs-grp{font-size:10px;color:var(--sub);margin-top:2px}
+.fd-slot .fs-rm{font-size:10px;font-weight:800;padding:2px 7px;border-radius:3px;
+  margin-left:6px;display:inline-block}
+.brk-row-fd{background:#FFF9C4;text-align:center;padding:7px;font-size:10px;
+  color:#7B6E00;font-weight:700;border-bottom:1px solid #F9A825;grid-column:1/-1}
+
+/* ══════════════════════════════════════════════
+   VIEW 4 — SEARCH
+══════════════════════════════════════════════ */
+.srch-results{display:flex;flex-direction:column;gap:8px}
+.sr-card{background:var(--wh);border:1px solid var(--bd);border-radius:8px;
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.sr-card.hl{border-color:var(--blue);background:#F0F6FF}
+.sr-per{min-width:100px}
+.sr-per .sp-p{font-size:11px;font-weight:700;color:var(--blue)}
+.sr-per .sp-t{font-size:9px;color:var(--sub);margin-top:2px}
+.sr-card .sr-ico{font-size:20px;flex-shrink:0}
+.sr-info .si-t{font-size:13px;font-weight:700}
+.sr-info .si-a{font-size:11px;color:var(--sub);margin-top:2px}
+.sr-rm{margin-left:auto;font-size:11px;font-weight:800;padding:4px 10px;
+  border-radius:4px;background:var(--navy);color:#fff;white-space:nowrap;flex-shrink:0}
+.no-r{text-align:center;padding:40px;color:var(--sub);font-size:13px}
+.srch-hint{font-size:12px;color:var(--sub);margin-bottom:12px}
+.srch-count{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;
+  padding:10px 14px;background:var(--wh);border-radius:8px;border:1px solid var(--bd)}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.section-title{font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:10px}
+
+@media(max-width:600px){
+  .ctrl-bar{padding:8px 12px}
+  .panel{padding:12px}
+  .glance-table{font-size:9px}
+  .glance-table td{min-width:80px;padding:5px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <h1>AIA Design Department — Timetable 2026-27</h1>
+  <p>Ambassador International Academy · Al Khail, Dubai · Generated 12/9/2026 · 4 Teachers</p>
+  <div class="hdr-chips">
+    <span class="chip ch-sh">🎨 Shivani Oza — Design DD · Skylab</span>
+    <span class="chip ch-pv">⚙️ Pho Vu — Design Tech · Design PD</span>
+    <span class="chip ch-sb">📐 Sean Buscano — Design PD</span>
+    <span class="chip ch-mq">💻 Mudassar Qureshi — Design DD · Computer Sc</span>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="sbar">
+  <div class="sbar-left" id="sbar-txt">Loading...</div>
+  <div class="wk-btns">
+    <button class="wk-btn on" id="wk-a" onclick="setWeek('A')">Week A</button>
+    <button class="wk-btn" id="wk-b" onclick="setWeek('B')">Week B</button>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav">
+  <button class="ntab on" onclick="showTab('glance',this)">📊 At a Glance</button>
+  <button class="ntab" onclick="showTab('period',this)">🕐 By Period</button>
+  <button class="ntab" onclick="showTab('teacher',this)">👤 By Teacher</button>
+  <button class="ntab" onclick="showTab('search',this)">🔍 Search</button>
+</div>
+
+<!-- CONTROLS (shared) -->
+<div class="ctrl-bar">
+  <div class="ctrl">
+    <label>Day</label>
+    <select id="sel-day" onchange="renderActive()">
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+      <option>Thursday</option><option>Friday</option>
+    </select>
+  </div>
+  <div class="ctrl" id="ctrl-period" style="display:none">
+    <label>Period</label>
+    <select id="sel-period" onchange="renderActive()">
+      <option value="0">Registration (7:30-7:50)</option>
+      <option value="1">Period 1 (7:50-8:50)</option>
+      <option value="2">Period 2 (8:50-9:40)</option>
+      <option value="3">Period 3 (10:00-10:50)</option>
+      <option value="4">Period 4 (10:50-11:40)</option>
+      <option value="5">Period 5 (11:40-12:30)</option>
+      <option value="6">Period 6 (12:30-13:20)</option>
+      <option value="7">Period 7 (14:00-15:00)</option>
+    </select>
+  </div>
+  <div class="ctrl si" id="ctrl-search">
+    <label>Search classroom / class / subject</label>
+    <input type="text" id="q" placeholder="e.g. 304, 7A, Skylab, B8DD..." oninput="renderActive()">
+  </div>
+</div>
+
+<!-- PERIOD PILLS (for period view) -->
+<div class="pperiods" id="period-pills" style="display:none">
+  <span class="ppill brk">7:30</span>
+</div>
+
+<!-- ═══ PANEL: AT A GLANCE ═══ -->
+<div class="panel on" id="tab-glance">
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:var(--sh)"></span>Shivani Oza</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--pv)"></span>Pho Vu</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--sb)"></span>Sean Buscano</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--mq)"></span>Mudassar Qureshi</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--free)"></span>Free</span>
+    <span style="font-size:10px;color:var(--sub);margin-left:8px">
+      ▸ Room numbers shown in coloured badges below each slot
+    </span>
+  </div>
+  <div class="glance-wrap">
+    <table class="glance-table" id="glance-tbl"></table>
+  </div>
+</div>
+
+<!-- ═══ PANEL: BY PERIOD ═══ -->
+<div class="panel" id="tab-period">
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:var(--sh)"></span>Shivani Oza</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--pv)"></span>Pho Vu</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--sb)"></span>Sean Buscano</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--mq)"></span>Mudassar Qureshi</span>
+  </div>
+  <div id="period-out"></div>
+</div>
+
+<!-- ═══ PANEL: BY TEACHER ═══ -->
+<div class="panel" id="tab-teacher">
+  <div class="teacher-tabs">
+    <button class="ttab ttab-sh on" id="tt-sh" onclick="setTeacher('Shivani Oza',this)">🎨 Shivani Oza</button>
+    <button class="ttab ttab-pv" id="tt-pv" onclick="setTeacher('Pho Vu',this)">⚙️ Pho Vu</button>
+    <button class="ttab ttab-sb" id="tt-sb" onclick="setTeacher('Sean Buscano',this)">📐 Sean Buscano</button>
+    <button class="ttab ttab-mq" id="tt-mq" onclick="setTeacher('Mudassar Qureshi',this)">💻 Mudassar Qureshi</button>
+  </div>
+  <div id="teacher-out"></div>
+</div>
+
+<!-- ═══ PANEL: SEARCH ═══ -->
+<div class="panel" id="tab-search">
+  <div class="srch-hint">Type a room number, class group, subject or teacher name to find instantly.</div>
+  <div id="search-out"></div>
+</div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const PERIODS=["Registration","Period 1","Period 2","Period 3","Period 4","Period 5","Period 6","Period 7"];
+const TIMES=["7:30–7:50","7:50–8:50","8:50–9:40","10:00–10:50","10:50–11:40","11:40–12:30","12:30–13:20","14:00–15:00"];
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const TEACHERS=["Shivani Oza","Pho Vu","Sean Buscano","Mudassar Qureshi"];
+
+const TC={
+  "Shivani Oza":    {c:"var(--sh)",bg:"var(--shbg)",bdr:"var(--shbdr)",init:"SO",rm:"rm-sh",cls:"t-sh"},
+  "Pho Vu":         {c:"var(--pv)",bg:"var(--pvbg)",bdr:"var(--pvbdr)",init:"PV",rm:"rm-pv",cls:"t-pv"},
+  "Sean Buscano":   {c:"var(--sb)",bg:"var(--sbbg)",bdr:"var(--sbbdr)",init:"SB",rm:"rm-sb",cls:"t-sb"},
+  "Mudassar Qureshi":{c:"var(--mq)",bg:"var(--mqbg)",bdr:"var(--mqbdr)",init:"MQ",rm:"rm-mq",cls:"t-mq"},
+};
+
+const TT={
+"Shivani Oza":{
+A:{
+Monday:   ["Reg-9D(318)","Skylab-B8SKY(10A10B10C10D/101)","free","free","Assembly-6D(318)","Assembly-6B(318)","Design-DD-B6DD(9A9B9D9C/318)","Design-DD-8B(318)"],
+Tuesday:  ["Reg-9D(318)","Design-DD-7A(318)","free","Skylab-B8(9A9B9D9C/101)","free","Design-DD-7D(318)","free","Skylab-B8SKY(10A10B10C10D/101)"],
+Wednesday:["Reg-9D(318)","Design-DD-8D(318)","free","Design-DD-6D(318)","free","Design-DD-8B(318)","Skylab-B8SKY(10A10B10C10D/101)","Design-DD-6B(318)"],
+Thursday: ["Reg-9D(318)","Design-DD-7D(318)","Design-DD-B6DD(9A9B9D9C/318)","Design-DD-8D(318)","Skylab-B8(9A9B9D9C/101)","free","free","free"],
+Friday:   ["Reg-9D(318)","Design-DD-B6DD(9A9B9D9C/318)","Skylab-B8(9A9B9D9C/101)","Design-DD-7A(318)","free","free","free","free"],
+},
+B:{
+Monday:   ["Reg-9D(318)","Skylab-B8(9A9B9D9C/101)","Skylab-B8SKY(10A10B10C10D/101)","Design-DD-7A(318)","Design-DD-6D(318)","Design-DD-8B(318)","Design-DD-7D(318)","Skylab-B8(9A9B9D9C/101)"],
+Tuesday:  ["Reg-9D(318)","Assembly-9D(318)","free","Skylab-B8SKY(10A10B10C10D/101)","Design-DD-8D(318)","free","free","Design-DD-B6DD(9A9B9D9C/318)"],
+Wednesday:["Reg-9D(318)","Design-DD-8B(309)","free","Design-DD-7D(318)","Skylab-B8SKY(10A10B10C10D/101)","Design-DD-6D(318)","Design-DD-B6DD(9A9B9D9C/318)","Design-DD-6B(318)"],
+Thursday: ["Reg-9D(318)","Design-DD-8D(318)","free","free","free","Design-DD-7A(318)","Design-DD-6B(318)","Design-DD-B6DD(9A9B9D9C/318)"],
+Friday:   ["Reg-9D(318)","Skylab-B8(9A9B9D9C/101)","free","free","free","free","free","free"],
+}},
+"Pho Vu":{
+A:{
+Monday:   ["Reg-6E(304)","DesignTech-B4DT(11A11B11C/202)","free","free","Design-PD-B3PD(10A10B10C10D/202)","DesignTech-B4DT(12A12B/202)","Design-PD-7C(202)","DesignTech-B4(11A11B11C/220)"],
+Tuesday:  ["Reg-6E(304)","DesignTech-B4DT(12A12B/202)","Design-PD-B6PD(10A10B10C10D/304)","free","DesignTech-B6(11A11B11C/304)","DesignTech-B4(11A11B11C/202)","free","free"],
+Wednesday:["Reg-6E(304)","Design-PD-B3PD(10A10B10C10D/202)","DesignTech-B6(11A11B11C/202)","DesignTech-B4DT(12A12B/202)","Design-PD-B6PD(10A10B10C10D/304)","DesignTech-B4(11A11B11C/202)","free","free"],
+Thursday: ["Reg-6E(304)","DesignTech-B6(11A11B11C/202)","free","free","DesignTech-B4(11A11B11C/202)","Design-PD-B6PD(10A10B10C10D/202)","free","Design-PD-7C(304)"],
+Friday:   ["Reg-6E(304)","DesignTech-B4DT(12A12B/326)","Design-PD-B3PD(10A10B10C10D/202)","DesignTech-B6(11A11B11C/221)","free","free","free","free"],
+},
+B:{
+Monday:   ["Reg-6E(304)","DesignTech-B4DT(12A12B/202A)","DesignTech-B6(11A11B11C/202)","free","free","DesignTech-B4(11A11B11C/205)","Design-PD-B3PD(10A10B10C10D/202)","free"],
+Tuesday:  ["Reg-6E(304)","Assembly-6E(304)","Design-PD-B6PD(10A10B10C10D/304)","Design-PD-7C(202)","DesignTech-B6(11A11B11C/202)","free","free","DesignTech-B4(11A11B11C/202)"],
+Wednesday:["Reg-6E(304)","DesignTech-B4(11A11B11C/202)","Design-PD-B6PD(10A10B10C10D/202)","Design-PD-B3PD(10A10B10C10D/202)","free","DesignTech-B6(11A11B11C/202)","DesignTech-B4(11A11B11C/202)","free"],
+Thursday: ["Reg-6E(304)","DesignTech-B6(11A11B11C/212)","Design-PD-7C(202)","free","DesignTech-B4(11A11B11C/202)","free","free","Design-PD-B3PD(10A10B10C10D/202)"],
+Friday:   ["Reg-6E(304)","DesignTech-B4DT(12A12B/304)","Design-PD-B6PD(10A10B10C10D/202)","free","free","free","free","free"],
+}},
+"Sean Buscano":{
+A:{
+Monday:   ["Reg-7D(208)","Design-PD-B8PD(10A10B10C10D/304)","free","free","Assembly-6C(304)","Assembly-6A(304)","Design-PD-B6PD(9A9C9B9D/304)","Design-PD-8A(304)"],
+Tuesday:  ["Reg-7D(208)","Design-PD-7B(304)","free","Design-PD-B8PD(9A9C9B9D/304)","free","Design-PD-7E(304)","free","Design-PD-B6PD(10A10B10C10D/304)"],
+Wednesday:["Reg-7D(208)","Design-PD-8C(304)","Design-PD-8E(304)","Design-PD-6C(304)","free","Design-PD-8A(304)","Design-PD-B8PD(10A10B10C10D/304)","Design-PD-6A(304)"],
+Thursday: ["Reg-7D(208)","Design-PD-7E(304)","Design-PD-B6PD(9A9C9B9D/304)","Design-PD-6C(304)","Design-PD-B8PD(9A9C9B9D/304)","free","Design-PD-8E(304)","free"],
+Friday:   ["Reg-7D(208)","Design-PD-B6PD(9A9C9B9D/304)","Design-PD-B8PD(9A9C9B9D/304)","Design-PD-7B(304)","free","free","free","free"],
+},
+B:{
+Monday:   ["Reg-7D(208)","Design-PD-B8PD(9A9C9B9D/304)","Design-PD-B8PD(10A10B10C10D/304)","Design-PD-7B(304)","Design-PD-6C(304)","Design-PD-8A(304)","Design-PD-7E(304)","Design-PD-B6PD(9A9C9B9D/304)"],
+Tuesday:  ["Reg-7D(208)","Assembly-7D(208)","free","Design-PD-B8PD(10A10B10C10D/304)","Design-PD-8C(304)","free","Design-PD-8E(304)","Design-PD-B6PD(9A9C9B9D/304)"],
+Wednesday:["Reg-7D(208)","Design-PD-8A(304)","free","Design-PD-7E(304)","Design-PD-B8PD(10A10B10C10D/304)","Design-PD-6C(304)","Design-PD-B6PD(9A9C9B9D/304)","Design-PD-6A(304)"],
+Thursday: ["Reg-7D(208)","Design-PD-6C(304)","free","free","free","Design-PD-7B(304)","Design-PD-6A(304)","Design-PD-B6PD(9A9C9B9D/304)"],
+Friday:   ["Reg-7D(208)","Design-PD-B8PD(9A9C9B9D/304)","Design-PD-8E(304)","free","free","free","free","free"],
+}},
+"Mudassar Qureshi":{
+A:{
+Monday:   ["free","Design-DD-B8DD(10A10B10C10D/226)","free","free","Design-DD-B3DD(10A10B10C10D/221)","free","free","ComputerSc-B4(11A11B11C/202)"],
+Tuesday:  ["free","free","Design-DD-B6DD(10A10B10C10D/202)","Design-DD-B8DD(9A9C9B9D/202)","free","ComputerSc-B4(11A11B11C/207)","free","Design-DD-B8DD(10A10B10C10D/226)"],
+Wednesday:["free","Design-DD-B3DD(10A10B10C10D/226)","free","Design-DD-B6DD(10A10B10C10D/202)","ComputerSc-B4(11A11B11C/205)","Design-DD-B8DD(10A10B10C10D/226)","Design-DD-B8DD(10A10B10C10D/226)","Assembly-6E(202)"],
+Thursday: ["free","free","free","Design-DD-B8DD(9A9C9B9D/201)","Design-DD-B6DD(10A10B10C10D/206)","free","free","free"],
+Friday:   ["free","Design-PD-6E(202)","Design-DD(9A9C9B9D+10A10B10C10D/221)","free","free","free","free","free"],
+},
+B:{
+Monday:   ["free","Design-DD-B8DD(9A9C9B9D/206)","Design-DD-B8DD(10A10B10C10D/221)","free","Design-PD-6E(202)","ComputerSc-B4(11A11B11C/202)","Design-DD-B3DD(10A10B10C10D/220)","Design-DD-B8DD(9A9C9B9D/202)"],
+Tuesday:  ["free","free","Design-DD-B6DD(10A10B10C10D/225)","Design-DD-B8DD(10A10B10C10D/217)","free","free","free","ComputerSc-B4(11A11B11C/221)"],
+Wednesday:["free","ComputerSc-B4(11A11B11C/206)","Design-DD-B8DD(10A10B10C10D/220)","Design-DD-B3DD(10A10B10C10D/223)","Design-DD-B8DD(10A10B10C10D/217)","free","ComputerSc-B4(11A11B11C/221)","free"],
+Thursday: ["free","Design-PD-6E(202)","DesignTech-B4DT(12A12B/206)","free","ComputerSc-B4(11A11B11C/304)","free","free","Design-DD-B3DD(10A10B10C10D/221)"],
+Friday:   ["free","Design-DD-B8DD(9A9C9B9D/206)","Design-DD-B6DD(10A10B10C10D/101)","free","free","free","free","free"],
+}},
+};
+
+// ═══════════════════ STATE ═══════════════════
+let week="A", activeTab="glance", activeTeacher="Shivani Oza";
+
+function isFr(s){return !s||s==="free";}
+
+function parse(s){
+  if(isFr(s)) return {free:true};
+  const m=s.match(/^(.+?)\((.+)\)$/);
+  if(!m) return {free:false,act:s,room:"",grp:""};
+  const raw=m[1].replace(/-/g," ").trim();
+  const inside=m[2];
+  const si=inside.lastIndexOf("/");
+  const room=si>=0?inside.slice(si+1):"";
+  const grp=si>=0?inside.slice(0,si).replace(/\//g," "):inside;
+  return {free:false,act:raw,room,grp,orig:s};
+}
+
+function ico(s){
+  if(isFr(s)) return "🟢";
+  const l=s.toLowerCase();
+  if(l.includes("assembly")) return "📢";
+  if(l.includes("skylab")) return "🔭";
+  if(l.includes("computer")) return "💻";
+  if(l.includes("reg")) return "📋";
+  if(l.includes("design-dd")||l.includes("digital")) return "🎨";
+  if(l.includes("design-pd")||l.includes("product")) return "📐";
+  if(l.includes("designtech")||l.includes("technology")) return "⚙️";
+  return "📚";
+}
+
+// ═══════════════════ TABS ═══════════════════
+function showTab(id,btn){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  document.querySelectorAll(".ntab").forEach(b=>b.classList.remove("on"));
+  document.getElementById("tab-"+id).classList.add("on");
+  btn.classList.add("on");
+  activeTab=id;
+  // show/hide controls
+  document.getElementById("ctrl-period").style.display  = id==="period"?"block":"none";
+  document.getElementById("ctrl-search").style.display  = id==="search"?"block":"none";
+  document.getElementById("period-pills").style.display = id==="period"?"flex":"none";
+  renderActive();
+}
+
+function setWeek(w){
+  week=w;
+  document.getElementById("wk-a").className="wk-btn"+(w==="A"?" on":"");
+  document.getElementById("wk-b").className="wk-btn"+(w==="B"?" on":"");
+  renderActive();
+}
+
+function setTeacher(t,btn){
+  activeTeacher=t;
+  document.querySelectorAll(".ttab").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  renderTeacher();
+}
+
+function renderActive(){
+  updateStatus();
+  if(activeTab==="glance")   renderGlance();
+  else if(activeTab==="period")  renderPeriod();
+  else if(activeTab==="teacher") renderTeacher();
+  else if(activeTab==="search")  renderSearch();
+}
+
+// ═══════════════════ STATUS ═══════════════════
+function updateStatus(){
+  const now=new Date();
+  const dn=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const h=now.getHours(),m=now.getMinutes();
+  const ts=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+  document.getElementById("sbar-txt").textContent=
+    `📅 ${dn[now.getDay()]} · ${now.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})} · ${ts} · Week ${week}`;
+}
+
+// ═══════════════════════════════════════════════
+// VIEW 1 — AT A GLANCE (full grid, all teachers, all periods, selected day)
+// ═══════════════════════════════════════════════
+function renderGlance(){
+  const day=document.getElementById("sel-day").value;
+  const tbl=document.getElementById("glance-tbl");
+
+  let h=`<thead><tr>
+    <th style="min-width:95px">Period · Time</th>
+    <th class="t-sh">🎨 Shivani Oza</th>
+    <th class="t-pv">⚙️ Pho Vu</th>
+    <th class="t-sb">📐 Sean Buscano</th>
+    <th class="t-mq">💻 Mudassar Qureshi</th>
+  </tr></thead><tbody>`;
+
+  // Week A rows
+  h+=`<tr class="day-hdr"><td colspan="5">WEEK A — ${day}</td></tr>`;
+  h+=buildGlanceRows("A",day);
+  // Week B rows
+  h+=`<tr class="day-hdr wk-b-start"><td colspan="5">WEEK B — ${day}</td></tr>`;
+  h+=buildGlanceRows("B",day);
+
+  h+=`</tbody>`;
+  tbl.innerHTML=h;
+}
+
+function buildGlanceRows(w,day){
+  let h="";
+  PERIODS.forEach((p,i)=>{
+    // Insert breaks
+    if(i===3) h+=`<tr class="brk-row"><td colspan="5">⏸ SMALL BREAK — 9:40 to 10:00</td></tr>`;
+    if(i===7) h+=`<tr class="brk-row"><td colspan="5">🍽️ LUNCH BREAK — 13:20 to 14:00</td></tr>`;
+
+    h+=`<tr>
+      <td class="period-col">
+        <div>${p.replace("Period ","P").replace("Registration","Reg")}</div>
+        <div class="ptime">${TIMES[i]}</div>
+      </td>`;
+
+    TEACHERS.forEach(t=>{
+      const slot=TT[t][w][day][i];
+      const prs=parse(slot);
+      const tc=TC[t];
+      if(prs.free){
+        h+=`<td><div class="free-cell">— free —</div></td>`;
+      } else if(slot.toLowerCase().includes("assembly")){
+        h+=`<td><div class="asm-cell">📢 Assembly<br>${prs.grp||""}<span class="rm ${tc.rm}" style="display:block;margin-top:3px">Rm ${prs.room}</span></div></td>`;
+      } else {
+        h+=`<td><div class="sc">
+          <div class="act">${ico(slot)} ${prs.act}</div>
+          <div class="grp">${prs.grp||"—"}</div>
+          <span class="rm ${tc.rm}">Rm ${prs.room||"—"}</span>
+        </div></td>`;
+      }
+    });
+    h+=`</tr>`;
+  });
+  return h;
+}
+
+// ═══════════════════════════════════════════════
+// VIEW 2 — BY PERIOD
+// ═══════════════════════════════════════════════
+function renderPeriod(){
+  const day=document.getElementById("sel-day").value;
+  const pi=parseInt(document.getElementById("sel-period").value)||0;
+  const q=(document.getElementById("q").value||"").toLowerCase();
+
+  // build period pills
+  const pills=document.getElementById("period-pills");
+  pills.innerHTML="";
+  PERIODS.forEach((p,i)=>{
+    if(i===3){const s=document.createElement("span");s.className="ppill brk";s.textContent="⏸ SB";pills.appendChild(s);}
+    if(i===7){const s=document.createElement("span");s.className="ppill brk";s.textContent="🍽 LB";pills.appendChild(s);}
+    const btn=document.createElement("button");
+    btn.className="ppill"+(i===pi?" on":"");
+    btn.textContent=p.replace("Period ","P").replace("Registration","Reg");
+    btn.title=TIMES[i];
+    btn.onclick=()=>{document.getElementById("sel-period").value=i;renderPeriod();};
+    pills.appendChild(btn);
+  });
+
+  let h=`<div style="font-size:12px;font-weight:700;color:var(--blue);
+    padding:9px 14px;background:var(--blt);border-radius:7px;margin-bottom:14px">
+    📍 ${PERIODS[pi]} &nbsp;·&nbsp; ${TIMES[pi]} &nbsp;·&nbsp; Week ${week} &nbsp;·&nbsp; ${day}
+  </div><div class="period-grid">`;
+
+  TEACHERS.forEach(t=>{
+    const slot=TT[t][week][day][pi];
+    const prs=parse(slot);
+    const tc=TC[t];
+    if(q && !slot.toLowerCase().includes(q) && !t.toLowerCase().includes(q)) return;
+    const hl=q&&slot.toLowerCase().includes(q)?" style='border:2px solid var(--blue);'":"";
+    h+=`<div class="tcard"${hl}>
+      <div class="tcard-hdr" style="background:${tc.bg};border-bottom:2px solid ${tc.bdr}">
+        <div class="av" style="background:${tc.bg};color:${tc.c};border:2px solid ${tc.bdr}">${tc.init}</div>
+        <div>
+          <div class="tname" style="color:${tc.c}">${t}</div>
+          <div class="tsub" style="color:${tc.c}">Week ${week} · ${day} · ${PERIODS[pi]}</div>
+        </div>
+      </div>
+      <div class="tcard-body">`;
+    if(prs.free){
+      h+=`<div class="free-big">🟢 Free — No class this period</div>`;
+    } else {
+      h+=`<div class="slot-big">
+        <div class="slot-ico">${ico(slot)}</div>
+        <div>
+          <div class="sb-act">${prs.act}</div>
+          <div class="sb-grp">${prs.grp||"—"}</div>
+          <span class="sb-rm" style="background:${tc.bg};color:${tc.c};border:1px solid ${tc.bdr}">Room ${prs.room||"—"}</span>
+        </div>
+      </div>`;
+    }
+    h+=`</div></div>`;
+  });
+  h+=`</div>`;
+  document.getElementById("period-out").innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════
+// VIEW 3 — BY TEACHER (full day)
+// ═══════════════════════════════════════════════
+function renderTeacher(){
+  const day=document.getElementById("sel-day").value;
+  const t=activeTeacher;
+  const tc=TC[t];
+  const q=(document.getElementById("q").value||"").toLowerCase();
+
+  let h=`<div class="fullday">`;
+  PERIODS.forEach((p,i)=>{
+    if(i===3) h+=`<div class="brk-row-fd">⏸ SMALL BREAK — 9:40 to 10:00</div>`;
+    if(i===7) h+=`<div class="brk-row-fd">🍽️ LUNCH BREAK — 13:20 to 14:00</div>`;
+
+    // Show both weeks side by side
+    const slotA=TT[t]["A"][day][i];
+    const slotB=TT[t]["B"][day][i];
+    const prsA=parse(slotA);
+    const prsB=parse(slotB);
+
+    const mkSlot=(prs,slot,wk)=>{
+      if(prs.free) return `<div style="flex:1;padding:6px 10px;background:var(--freebg);
+        border-radius:5px;color:var(--free);font-size:11px;font-style:italic;text-align:center">
+        <span style="font-size:10px;font-weight:700;color:${tc.c};display:block;margin-bottom:2px">Wk ${wk}</span>
+        🟢 Free</div>`;
+      const hl=q&&slot.toLowerCase().includes(q)?`background:${tc.bg};`:"background:var(--wh);";
+      return `<div style="flex:1;padding:6px 10px;border-radius:5px;border:1px solid ${tc.bdr};${hl}">
+        <span style="font-size:10px;font-weight:700;color:${tc.c};display:block;margin-bottom:3px">Wk ${wk}</span>
+        <div style="font-size:11px;font-weight:700;color:var(--navy)">${ico(slot)} ${prs.act}</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">${prs.grp||""}</div>
+        <span style="display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;
+          border-radius:3px;background:${tc.bg};color:${tc.c};margin-top:3px">Rm ${prs.room||"—"}</span>
+      </div>`;
+    };
+
+    h+=`<div class="fd-row">
+      <div class="fd-per" style="border-right-color:${tc.c}">
+        <div class="fp-name" style="color:${tc.c}">${p.replace("Period ","P").replace("Registration","Reg")}</div>
+        <div class="fp-time">${TIMES[i]}</div>
+      </div>
+      <div style="padding:8px 12px;display:flex;gap:8px;flex:1">
+        ${mkSlot(prsA,slotA,"A")}
+        ${mkSlot(prsB,slotB,"B")}
+      </div>
+    </div>`;
+  });
+  h+=`</div>`;
+  document.getElementById("teacher-out").innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════
+// VIEW 4 — SEARCH
+// ═══════════════════════════════════════════════
+function renderSearch(){
+  const day=document.getElementById("sel-day").value;
+  const q=(document.getElementById("q").value||"").toLowerCase().trim();
+  const out=document.getElementById("search-out");
+
+  if(!q){
+    out.innerHTML=`<div class="no-r">🔍 Start typing above — search by room number, class group, subject or teacher name</div>`;
+    return;
+  }
+
+  let results=[];
+  ["A","B"].forEach(w=>{
+    DAYS.forEach(d=>{
+      if(day!=="All" && d!==day && day) {} // filter if day selected — but search across all days
+      PERIODS.forEach((p,pi)=>{
+        TEACHERS.forEach(t=>{
+          const slot=TT[t][w][d][pi];
+          if(isFr(slot)) return;
+          if(slot.toLowerCase().includes(q)||t.toLowerCase().includes(q)||d.toLowerCase().includes(q)){
+            const prs=parse(slot);
+            results.push({w,d,p,pi,t,slot,prs,time:TIMES[pi]});
+          }
+        });
+      });
+    });
+  });
+
+  if(!results.length){
+    out.innerHTML=`<div class="no-r">No results for "<strong>${q}</strong>". Try a room number like 304, class like 7A, or subject like Skylab.</div>`;
+    return;
+  }
+
+  let h=`<div class="srch-count">${results.length} result(s) for "<strong>${q}</strong>" across all days &amp; weeks</div>
+  <div class="srch-results">`;
+
+  results.forEach(r=>{
+    const tc=TC[r.t];
+    h+=`<div class="sr-card hl">
+      <div class="sr-per">
+        <div class="sp-p">${r.p.replace("Period ","P").replace("Registration","Reg")}</div>
+        <div class="sp-t">${r.time}</div>
+        <div style="font-size:9px;font-weight:700;margin-top:3px;
+          color:${r.w==="A"?"var(--blue)":"#B45309"}">Week ${r.w} · ${r.d}</div>
+      </div>
+      <div class="sr-ico">${ico(r.slot)}</div>
+      <div class="sr-info" style="flex:1">
+        <div class="si-t" style="color:${tc.c}">${r.t}</div>
+        <div class="si-a">${r.prs.act} &nbsp;·&nbsp; ${r.prs.grp||"—"}</div>
+      </div>
+      <div class="sr-rm" style="background:${tc.c}">Rm ${r.prs.room||"—"}</div>
+    </div>`;
+  });
+
+  h+=`</div>`;
+  out.innerHTML=h;
+}
+
+// ═══════════════════ INIT ═══════════════════
+function init(){
+  const dn=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const today=dn[new Date().getDay()];
+  const daySelect=document.getElementById("sel-day");
+  const idx=["Monday","Tuesday","Wednesday","Thursday","Friday"].indexOf(today);
+  if(idx>=0) daySelect.selectedIndex=idx;
+  else daySelect.selectedIndex=0;
+
+  // Default search ctrl hidden
+  document.getElementById("ctrl-search").style.display="none";
+
+  renderGlance();
+  updateStatus();
+  setInterval(updateStatus,30000);
+}
+
+init();
+</script>
+</body>
+</html>
